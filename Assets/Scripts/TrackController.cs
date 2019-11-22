@@ -60,7 +60,7 @@ public class TrackController : MonoBehaviour
         var enemyPositions = GameHelper.FindComponentsInChildrenWithTag<Transform>(trackModel, "EnemySpot");
         if (!enemyPositions.Any()) return;
 
-        var randomEnemies = Random.Range(0, 4);
+        var randomEnemies = Random.Range(0, 5); //4 - lvl1
         for(var i=0; i<randomEnemies; i++)
         {
             var randomIndex = Random.Range(0, enemyPositions.Length);
@@ -69,7 +69,7 @@ public class TrackController : MonoBehaviour
             enemyPositions = enemyPositions.Where((val, idx) => idx != randomIndex).ToArray();
 
             GameObject enemy = null;
-            if(randomEnemies < 8)
+            if(randomEnemy < 7)
             {
                 enemy = GameObject.Instantiate(ZombieEnemy);
             }

@@ -92,6 +92,7 @@ public class CarBehaviour : MonoBehaviour
             Vector3 center = collider.bounds.center;
             Debug.Log("Fator de colisao:" + (center.y - contactPoint.y));
             ReduceLight(contactPoint.y - center.y);
+            GameController.GetInstance().HitSome();
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -103,6 +104,7 @@ public class CarBehaviour : MonoBehaviour
             collision.transform.GetComponentInChildren<SpriteRenderer>().sprite = BloodStain;
             rb.AddForce(Vector2.left * 2f, ForceMode2D.Impulse);
             ReduceLight(transform.position.y - collision.transform.position.y);
+            GameController.GetInstance().HitSome();
         } else if (collision.CompareTag("SpecialEnemy"))
         {
             GameController.GetInstance().TurnOnScary();

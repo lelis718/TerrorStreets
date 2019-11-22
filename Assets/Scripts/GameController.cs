@@ -14,6 +14,13 @@ public class GameController : MonoBehaviour
     public GameObject WhiteScaryImage;
     public GameObject BlackScaryImage;
 
+    public AudioClip hitClip;
+    public AudioClip screamClip;
+    public AudioClip zombieClip;
+
+    private AudioSource audio;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,11 +30,16 @@ public class GameController : MonoBehaviour
         BlackScaryImage.SetActive(false);
         var playerAnimController = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
         playerAnimController.SetTrigger("StartEngine");
-
+        audio = GetComponent<AudioSource>();
     }
 
+    public void HitSome()
+    {
+        audio.PlayOneShot(hitClip,1);
+    }
     public void TurnOnScary()
     {
+        audio.PlayOneShot(screamClip,1);
         WhiteScaryImage.SetActive(true);
     }
     public void TurnOffScary()
@@ -37,6 +49,7 @@ public class GameController : MonoBehaviour
 
     public void SetGameOver()
     {
+        audio.PlayOneShot(zombieClip, 1);
         WhiteScaryImage.SetActive(false);
         BlackScaryImage.SetActive(true);
         GameObject.FindGameObjectWithTag("Player").SetActive(false);
