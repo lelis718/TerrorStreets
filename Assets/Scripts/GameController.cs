@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,12 @@ public class GameController : MonoBehaviour
     private static GameController _instance;
     public static GameController GetInstance() {
         return GameController._instance;
+    }
+
+
+    public void Quit()
+    {
+        UnityEngine.Application.Quit();
     }
 
     public GameObject WhiteScaryImage;
@@ -28,8 +35,6 @@ public class GameController : MonoBehaviour
         GameController._instance = this;
         WhiteScaryImage.SetActive(false);
         BlackScaryImage.SetActive(false);
-        var playerAnimController = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
-        playerAnimController.SetTrigger("StartEngine");
         audio = GetComponent<AudioSource>();
     }
 
@@ -58,10 +63,29 @@ public class GameController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    public void Level1()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
+    public void Level2()
+    {
+        SceneManager.LoadScene("Level2");
+    }
+    public void Level3()
+    {
+        SceneManager.LoadScene("Level3");
+    }
+    public void Credits()
+    {
+        SceneManager.LoadScene("Credits");
+    }
 
     // Update is called once per frame
     void Update()
     {
         
     }
+
+
 }

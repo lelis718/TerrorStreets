@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(AudioSource))]
 public class CarBehaviour : MonoBehaviour
 {
     public Sprite FullLightSprite;
@@ -11,30 +13,50 @@ public class CarBehaviour : MonoBehaviour
     public Sprite RightLightOffSprite;
     public Sprite NoneLightSprite;
     public Sprite BloodStain;
-
+    public AudioClip startEngine;
     public Light leftLight;
+
+
     public Light rightLight;
     public Light topLight;
 
     private Collider2D collider;
     private Rigidbody2D rb;
+    private AudioSource audio;
 
     private SpriteRenderer carSprite;
+    private Animator anim;
+    
+    
 
     private bool leftLightBroke = false;
     private bool rightLightBroke = false;
     private bool gameOverNextFrame = false;
+    private bool carOff = true;
+    private bool carPausedForLore = false;
+    private bool magicActivated = false;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         carSprite = GetComponentInChildren<SpriteRenderer>();
+        anim = GetComponentInChildren<Animator>();
         collider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        audio = GetComponent<AudioSource>();
         leftLightBroke = false;
         rightLightBroke = false;
         gameOverNextFrame = false;
+        carOff = true;
+        carPausedForLore = false;
+        magicActivated = false;
+        audio.Stop();
+    }
+    public bool HasActivatedMagic()
+    {
+        return magicActivated;
     }
 
     public void LightsOff()
@@ -43,7 +65,7 @@ public class CarBehaviour : MonoBehaviour
         rightLight.enabled = false;
         topLight.enabled = false;
     }
-    public void CheckLights()
+    public void LightsOn()
     {
         leftLight.enabled = !leftLightBroke;
         rightLight.enabled = !rightLightBroke;
@@ -52,12 +74,42 @@ public class CarBehaviour : MonoBehaviour
             topLight.enabled = true;
         else
             topLight.enabled = false;
+    }
+    public bool CheckLights()
+    {
+        return leftLight.enabled || rightLight.enabled;
+    }
+    public bool IsCarOff()
+    {
+        return carOff;
+    }
 
-
+    public void StartCar()
+    {
+        carOff = false;
+        anim.SetTrigger("StartEngine");
     }
 
     void Update()
     {
+        if (carOff)
+        {
+            LightsOff();
+            if (Input.GetMouseButtonDown(0))
+            {
+                this.audio.PlayOneShot(startEngine,1);
+                carOff = false;
+                anim.SetTrigger("StartEngine");
+                audio.Play();
+            }
+            return;
+        }
+        else
+        {
+            
+        }
+
+
         if (gameOverNextFrame)
         {
             GameController.GetInstance().SetGameOver();
@@ -68,7 +120,7 @@ public class CarBehaviour : MonoBehaviour
             LightsOff();
         } else
         {
-            CheckLights();
+            LightsOn();
         }
 
         if(leftLightBroke)
@@ -94,6 +146,7 @@ public class CarBehaviour : MonoBehaviour
             ReduceLight(contactPoint.y - center.y);
             GameController.GetInstance().HitSome();
         }
+        
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -109,7 +162,33 @@ public class CarBehaviour : MonoBehaviour
         {
             GameController.GetInstance().TurnOnScary();
             //Ativa o grito
+        } else if (collision.CompareTag("Lore"))
+        {
+            if (!carPausedForLore)
+            {
+                anim.enabled = true;
+                carOff = true;
+                carPausedForLore = true;
+                anim.SetTrigger("CarOff");
+                audio.Stop();
+            }
+        }else if (collision.CompareTag("ActivateMagic"))
+        {
+            this.magicActivated = true;
+
+        }else if(collision.gameObject.name == "Level2")
+        {
+            GameController.GetInstance().Level2();
         }
+        else if (collision.gameObject.name == "Level3")
+        {
+            GameController.GetInstance().Level3();
+        }
+        else if (collision.gameObject.name == "Level4")
+        {
+            GameController.GetInstance().Credits();
+        }
+
     }
     private void OnTriggerExit2D(Collider2D collision)
     {

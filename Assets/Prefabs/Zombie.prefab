@@ -259,3 +259,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefe5d6b090fe6e4586abbdf38da7903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  distanceToStartHearing: 10

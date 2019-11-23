@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class CarController : MonoBehaviour
+[RequireComponent(typeof(CarBehaviour))]
+public class CarAutoController : MonoBehaviour
 {
 
 
@@ -20,43 +21,62 @@ public class CarController : MonoBehaviour
 
 
     private Rigidbody2D rb;
+    private CarBehaviour carBehaviour;
     private bool shouldMove = false;
 
 
-    // Start is called before the first frame update
+// Start is called before the first frame update
     void Start()
     {
+        carBehaviour = GetComponent<CarBehaviour>();
         rb = GetComponent<Rigidbody2D>();
+        shouldMove = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            shouldMove = true;
+        if (carBehaviour.IsCarOff()) {
+            carBehaviour.StartCar();
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-            shouldMove = false;
-        }
+        
+        ////No movement if car is off
+        //if (!carBehaviour.CheckLights())
+        //{
+        //    shouldMove = false;
+        //    return;
+        //}
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    shouldMove = true;
+        //}
+        //if (Input.GetMouseButtonUp(0))
+        //{
+        //    shouldMove = false;
+        //}
     }
     void FixedUpdate()
     {
+        if (carBehaviour.IsCarOff()) return;
+
+        //float h = 0;
+        //float v = 0;
+
+        //if (shouldMove)
+        //{
+        //    var heightMovement = Screen.height * 0.5f;
+        //    var mousePosition = Input.mousePosition.y;
+        //    h = Mathf.Clamp((mousePosition - heightMovement) / (heightMovement), -1, 1);
+        //    v = 1;
+
+        //} else
+        //{
+        //    v = 0;
+        //}
+        
         float h = 0;
-        float v = 0;
+        float v = 1;
 
-        if (shouldMove)
-        {
-            var heightMovement = Screen.height * 0.5f;
-            var mousePosition = Input.mousePosition.y;
-            h = Mathf.Clamp((mousePosition - heightMovement) / (heightMovement), -1, 1);
-            v = 1;
-
-        } else
-        {
-            v = 0;
-        }
 
         //rb.AddForce(transform.right * aceleration * v);
         //rb.AddTorque(h * steering, ForceMode2D.Impulse);
